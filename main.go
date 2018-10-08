@@ -3,32 +3,14 @@ package main
 import (
 	"fmt"
 
+	"gin-api-boilerplate/middleware"
 	"gin-api-boilerplate/routes"
 
+	"github.com/ChiQianBingYue/go-api-lib/config"
+	"github.com/ChiQianBingYue/go-api-lib/log"
+	"github.com/ChiQianBingYue/go-api-lib/mongo"
 	"github.com/gin-gonic/gin"
-	"github.com/ihahoo/go-api-lib/config"
-	"github.com/ihahoo/go-api-lib/dbx"
-	"github.com/ihahoo/go-api-lib/log"
-	"github.com/ihahoo/go-api-lib/redis"
 )
-
-// CORSMiddleware ...
-func CORSMiddleware() gin.HandlerFunc {
-	return func(c *gin.Context) {
-		c.Writer.Header().Set("Access-Control-Allow-Origin", "*")
-		c.Writer.Header().Set("Access-Control-Max-Age", "86400")
-		c.Writer.Header().Set("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE, UPDATE")
-		c.Writer.Header().Set("Access-Control-Allow-Headers", "X-Requested-With, Content-Type, Origin, Authorization, Accept, Client-Security-Token, Accept-Encoding, x-access-token")
-		c.Writer.Header().Set("Access-Control-Expose-Headers", "Content-Length")
-		// c.Writer.Header().Set("Access-Control-Allow-Credentials", "true")
-
-		if c.Request.Method == "OPTIONS" {
-			c.AbortWithStatus(200)
-		} else {
-			c.Next()
-		}
-	}
-}
 
 func main() {
 	name := config.GetString("name")
@@ -37,14 +19,16 @@ func main() {
 	// 初始化默认redis db, 后面在使用的时候import "github.com/ihahoo/go-api-lib/redis" 通过redis.DB(0)调用实例
 	// 如果要初始化多个redis的db，则在这里添加，比如redis.Init(1)就建立了一个db 1的连接
 	// 如果不使用redis，则删除这里以及其它和redis相关的包引入
-	redis.Init(0)
+	// redis.Init(0)
 
 	// 初始化数据库
-	db.Init()
+	mongo.Init()
 
 	r := gin.Default()
 	r.HandleMethodNotAllowed = true
-	r.Use(CORSMiddleware())
+	r.Use(middleware.NoCache)
+
+	r.Use(middleware.Logger(log.GetLog()), gin.Recovery())
 
 	routes.Routes(r)
 

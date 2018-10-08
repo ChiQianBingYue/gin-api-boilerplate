@@ -1,23 +1,25 @@
+include .env
+
+
 .PHONY: start build run lint clean doc dev docker-build docker-image docker-image-staging docker-image-dev start-docker-dev stop-docker-dev
 
-GONAME=api
 
 default: build
 
 start:
-	@GIN_MODE=release ./bin/$(GONAME) 
+	@GIN_MODE=release ./bin/$(API_NAME) 
 
 build:
-	@go build -o bin/$(GONAME) 
+	@go build -o bin/$(API_NAME) 
 
 run:
-	@./bin/$(GONAME) 
+	@./bin/$(API_NAME) 
 
 lint:
 	@golint
 
 clean:
-	@go clean && rm -rf ./bin/$(GONAME) && rm -f gin-bin
+	@go clean && rm -rf ./bin/$(API_NAME) && rm -f gin-bin
 
 doc:
 	godoc -http=:6060 -index
@@ -29,10 +31,10 @@ docker-build: clean
 	@docker-compose -f docker/development/docker-compose.yml run --rm api make build
 
 docker-image: docker-build 
-	@docker build -t my-api:latest .
+	@docker build -t $(API_NAME):latest .
 
 docker-image-staging: docker-build 
-	@docker build -t my-api:staging .
+	@docker build -t $(API_NAME):staging .
 
 docker-image-dev:
 	@docker-compose -f docker/development/docker-compose.yml run --rm api dep ensure -v

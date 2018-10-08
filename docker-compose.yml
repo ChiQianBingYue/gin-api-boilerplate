@@ -4,7 +4,7 @@ services:
     build:
       context: .
       dockerfile: docker/development/Dockerfile
-    image: api-dev
+    image: ${API_NAME}
     command: make dev 
     ports:
       - 8080:3030
@@ -14,14 +14,21 @@ services:
       - db
       - redis
   db:
-    image: postgres:9.6-alpine
-    volumes:
-      - ./data/postgresql:/var/lib/postgresql/data/pgdata
+    image: mongo:4.0.2-xenial
     ports:
-      - 5432:5432
+      - 27017:27017
+    volumes:
+      - ./docker/development/mongo-init/:/docker-entrypoint-initdb.d/
     environment:
-      POSTGRES_PASSWORD: SgQ6Vhc3u015xOL09se9
-      PGDATA: /var/lib/postgresql/data/pgdata
+      - MONGO_INITDB_ROOT_USERNAME=${MONGO_ROOT_USERNAME}
+      - MONGO_INITDB_ROOT_PASSWORD=${MONGO_ROOT_PASSWORD}
+      - APP_MONGO_HOST=${MONGO_HOST}
+      - MONGO_PORT=${MONGO_PORT}
+      - MONGO_ROOT_USER=${MONGO_ROOT_USERNAME}
+      - MONGO_ROOT_PASS=${MONGO_ROOT_PASSWORD}
+      - APP_MONGO_USER=${APP_MONGO_USER}
+      - APP_MONGO_PASS=${APP_MONGO_PASS}
+      - APP_MONGO_DB=${APP_MONGO_DB}
   redis:
     image: redis:4-alpine
     volumes:

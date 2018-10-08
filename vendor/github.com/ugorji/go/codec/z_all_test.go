@@ -1,3 +1,6 @@
+// Copyright (c) 2012-2018 Ugorji Nwoke. All rights reserved.
+// Use of this source code is governed by a MIT license found in the LICENSE file.
+
 // +build alltests
 // +build go1.7
 
@@ -78,7 +81,7 @@ func testSuite(t *testing.T, f func(t *testing.T)) {
 	t.Run("optionsTrue-deepstruct", f)
 	testDepth = 0
 
-	testEncodeOptions.AsSymbols = AsSymbolAll
+	// testEncodeOptions.AsSymbols = AsSymbolAll
 	testUseIoWrapper = true
 	testReinit()
 	t.Run("optionsTrue-ioWrapper", f)
@@ -226,6 +229,16 @@ func testCodecGroup(t *testing.T) {
 	t.Run("TestMsgpackScalars", TestMsgpackScalars)
 	t.Run("TestBincScalars", TestBincScalars)
 	t.Run("TestSimpleScalars", TestSimpleScalars)
+	t.Run("TestJsonOmitempty", TestJsonOmitempty)
+	t.Run("TestCborOmitempty", TestCborOmitempty)
+	t.Run("TestMsgpackOmitempty", TestMsgpackOmitempty)
+	t.Run("TestBincOmitempty", TestBincOmitempty)
+	t.Run("TestSimpleOmitempty", TestSimpleOmitempty)
+	t.Run("TestJsonIntfMapping", TestJsonIntfMapping)
+	t.Run("TestCborIntfMapping", TestCborIntfMapping)
+	t.Run("TestMsgpackIntfMapping", TestMsgpackIntfMapping)
+	t.Run("TestBincIntfMapping", TestBincIntfMapping)
+	t.Run("TestSimpleIntfMapping", TestSimpleIntfMapping)
 
 	t.Run("TestJsonInvalidUnicode", TestJsonInvalidUnicode)
 	t.Run("TestCborHalfFloat", TestCborHalfFloat)
@@ -257,6 +270,8 @@ func testJsonGroup(t *testing.T) {
 	t.Run("TestJsonUintToInt", TestJsonUintToInt)
 	t.Run("TestJsonDifferentMapOrSliceType", TestJsonDifferentMapOrSliceType)
 	t.Run("TestJsonScalars", TestJsonScalars)
+	t.Run("TestJsonOmitempty", TestJsonOmitempty)
+	t.Run("TestJsonIntfMapping", TestJsonIntfMapping)
 }
 
 func testBincGroup(t *testing.T) {
@@ -280,6 +295,8 @@ func testBincGroup(t *testing.T) {
 	t.Run("TestBincUintToInt", TestBincUintToInt)
 	t.Run("TestBincDifferentMapOrSliceType", TestBincDifferentMapOrSliceType)
 	t.Run("TestBincScalars", TestBincScalars)
+	t.Run("TestBincOmitempty", TestBincOmitempty)
+	t.Run("TestBincIntfMapping", TestBincIntfMapping)
 }
 
 func testCborGroup(t *testing.T) {
@@ -304,7 +321,8 @@ func testCborGroup(t *testing.T) {
 	t.Run("TestCborUintToInt", TestCborUintToInt)
 	t.Run("TestCborDifferentMapOrSliceType", TestCborDifferentMapOrSliceType)
 	t.Run("TestCborScalars", TestCborScalars)
-
+	t.Run("TestCborOmitempty", TestCborOmitempty)
+	t.Run("TestCborIntfMapping", TestCborIntfMapping)
 	t.Run("TestCborHalfFloat", TestCborHalfFloat)
 }
 
@@ -328,6 +346,8 @@ func testMsgpackGroup(t *testing.T) {
 	t.Run("TestMsgpackUintToInt", TestMsgpackUintToInt)
 	t.Run("TestMsgpackDifferentMapOrSliceType", TestMsgpackDifferentMapOrSliceType)
 	t.Run("TestMsgpackScalars", TestMsgpackScalars)
+	t.Run("TestMsgpackOmitempty", TestMsgpackOmitempty)
+	t.Run("TestMsgpackIntfMapping", TestMsgpackIntfMapping)
 }
 
 func testSimpleGroup(t *testing.T) {
@@ -349,6 +369,8 @@ func testSimpleGroup(t *testing.T) {
 	t.Run("TestSimpleUintToInt", TestSimpleUintToInt)
 	t.Run("TestSimpleDifferentMapOrSliceType", TestSimpleDifferentMapOrSliceType)
 	t.Run("TestSimpleScalars", TestSimpleScalars)
+	t.Run("TestSimpleOmitempty", TestSimpleOmitempty)
+	t.Run("TestSimpleIntfMapping", TestSimpleIntfMapping)
 }
 
 func testSimpleMammothGroup(t *testing.T) {
@@ -405,17 +427,17 @@ func TestCodecSuite(t *testing.T) {
 	t.Run("cbor-rfc3339", testCborGroup)
 	testCborH.TimeRFC3339 = oldTimeRFC3339
 
-	oldSymbols := testBincH.getBasicHandle().AsSymbols
+	oldSymbols := testBincH.AsSymbols
 
-	testBincH.getBasicHandle().AsSymbols = AsSymbolNone
+	testBincH.AsSymbols = 2 // AsSymbolNone
 	testReinit()
 	t.Run("binc-no-symbols", testBincGroup)
 
-	testBincH.getBasicHandle().AsSymbols = AsSymbolAll
+	testBincH.AsSymbols = 1 // AsSymbolAll
 	testReinit()
 	t.Run("binc-all-symbols", testBincGroup)
 
-	testBincH.getBasicHandle().AsSymbols = oldSymbols
+	testBincH.AsSymbols = oldSymbols
 
 	oldWriteExt := testMsgpackH.WriteExt
 	oldNoFixedNum := testMsgpackH.NoFixedNum

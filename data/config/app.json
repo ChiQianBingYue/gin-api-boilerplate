@@ -12,6 +12,17 @@
       "connectTimeout": 60
     }
   },
+  "mongo": {
+    "type": "mongodb",
+    "options": {
+      "user": "boilerplate",
+      "password": "$=#Mnxf?n]#O",
+      "host": "localhost",
+      "port": 27017,
+      "dbname": "boilerplate",
+      "connectTimeout": 60
+    }
+  },
   "redis": {
     "host": "redis",
     "port": 6379,
